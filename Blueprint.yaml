@@ -1,5 +1,5 @@
 blueprint:
-  name: Automatic Hilo challenges with Schedule, Scenes (Travis)
+  name: Automatic Hilo challenges with Schedule, Scenes
   description: Optimize your heating based on schedule,and Hilo challenges.
   domain: automation
   input:
@@ -9,7 +9,7 @@ blueprint:
       default: null
       selector:
         entity:
-          domain: switch 
+          domain: switch
     challenge_entity:
       name: Entité de phase de défi
       description: Input_text entity thas was manualy created
@@ -131,12 +131,12 @@ action:
                   entity_id: !input scenes_day_lower
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_off
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_off
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -147,12 +147,12 @@ action:
                   entity_id: !input scenes_day_higher
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_on
-                        data: {}
-                        target:
-                          entity_id: !input water_heater                
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_on
+                      data: {}
+                      target:
+                        entity_id: !input water_heater                
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -163,12 +163,12 @@ action:
                   entity_id: scene.hilo_anchor
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_on
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_on
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -179,12 +179,12 @@ action:
                   entity_id: !input scenes_challenge
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_off
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_off
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -195,12 +195,12 @@ action:
                   entity_id: !input scenes_preheat
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_on
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_on
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -211,12 +211,12 @@ action:
                   entity_id: !input scenes_normal_day
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_off
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_off
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
     else:
       - choose:
           - conditions:
@@ -229,12 +229,12 @@ action:
                   entity_id: !input scenes_night_lower
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_off
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_off
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -245,12 +245,12 @@ action:
                   entity_id: !input scenes_night_higher
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_on
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_on
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -261,12 +261,12 @@ action:
                   entity_id: !input scenes_night_anchor
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_on
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_on
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -277,12 +277,12 @@ action:
                   entity_id: !input scenes_challenge
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_off
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_off
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -293,12 +293,12 @@ action:
                   entity_id: !input scenes_preheat
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_on
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_on
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
           - conditions:
               - condition: state
                 entity_id: !input challenge_entity
@@ -309,10 +309,10 @@ action:
                   entity_id: !input scenes_normal_night
                 metadata: {}
               - choose:
-                  - conditions: "{{ water_heater|length > 0 }}"
-                    sequence:
-                      - service: switch.turn_off
-                        data: {}
-                        target:
-                          entity_id: !input water_heater
+                - conditions: "{{ water_heater|length > 0 }}"
+                  sequence:
+                    - service: switch.turn_off
+                      data: {}
+                      target:
+                        entity_id: !input water_heater
 mode: single
