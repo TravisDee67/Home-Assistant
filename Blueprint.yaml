@@ -10,7 +10,12 @@ blueprint:
       selector:
         entity:
           domain: switch 
-    challenge_entity: input_text.phase_courante_des_defis
+    challenge_entity:
+      name: Entité de phase de défi
+      description: Input_text entity thas was manualy created
+      selector:
+        entity:
+          domain: input_text
     scenes_normal_day:
       name: Normal daytime scenes (based on schedule)
       description: Temperature for times without a challenge (no reference, no appreciation).
@@ -104,7 +109,7 @@ blueprint:
   source_url: https://raw.githubusercontent.com/TravisDee67/Home-Assistant/main/Blueprint.yaml
 trigger:
   - platform: state
-    entity_id: input_text.phase_courante_des_defis
+    entity_id: !input challenge_entity
   - platform: state
     entity_id:
       - schedule.daytime
@@ -118,7 +123,7 @@ action:
       - choose:
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: ref_appreciation
             sequence:
               - choose:
@@ -134,7 +139,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: appreciation
             sequence:
               - choose:
@@ -150,7 +155,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: ref_challenge
             sequence:
               - choose:
@@ -166,7 +171,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: challenge
             sequence:
               - choose:
@@ -182,7 +187,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: preheat
             sequence:
               - choose:
@@ -198,7 +203,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: normal
             sequence:
               - choose:
@@ -216,7 +221,7 @@ action:
       - choose:
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: ref_appreciation
             sequence:
               - choose:
@@ -232,7 +237,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: appreciation
             sequence:
               - choose:
@@ -248,7 +253,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: ref_challenge
             sequence:
               - choose:
@@ -264,7 +269,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: challenge
             sequence:
               - choose:
@@ -280,7 +285,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: preheat
             sequence:
               - choose:
@@ -296,7 +301,7 @@ action:
                 metadata: {}
           - conditions:
               - condition: state
-                entity_id: input_text.phase_courante_des_defis
+                entity_id: !input challenge_entity
                 state: normal
             sequence:
               - choose:
