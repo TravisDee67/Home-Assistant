@@ -1,5 +1,5 @@
 blueprint:
-  name: Automatic Hilo challenges with Schedule, Scenes
+  name: Automatic Hilo challenges with Schedule, Scenes (Travis)
   description: Optimize your heating based on schedule,and Hilo challenges.
   domain: automation
   input:
