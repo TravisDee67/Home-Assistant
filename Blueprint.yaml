@@ -34,6 +34,42 @@ blueprint:
           domain:
             - scene
           multiple: true
+    scenes_night_higher:
+      name: Morning challenge reference scenes (6am - 10pm)
+      description: Temperature for reference phases (higher than normal) (low impact on rewards).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_day_higher:
+      name: Afternoon challenge reference scenes (5pm - 8pm)
+      description: Temperature for reference phases (higher than normal) (low impact on rewards).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_night_lower:
+      name: Morning reference scenes (1am to 4am)
+      description: Temperature for reference assessment phases (lower than normal) (moderate impact on rewards).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_day_lower:
+      name: Afternoon reference scenes (12pm to 3pm)
+      description: Temperature for reference assessment phases (lower than normal) (moderate impact on rewards).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
     scenes_night_anchor:
       name: Hilo Challenge Anchor - Nighttime
       description: Temperature for 1am to 4am on challenge days (higher than normal) (significant impact on rewards).
@@ -52,42 +88,6 @@ blueprint:
           domain:
             - scene
           multiple: true
-    scenes_night_higher:
-      name: Morning reference scenes (6am - 10pm)
-      description: Temperature for reference phases (higher than normal) (low impact on rewards).
-      default:
-      selector:
-        entity:
-          domain:
-            - scene
-          multiple: true
-    scenes_day_higher:
-      name: Afternoon reference scenes (5pm - 8pm)
-      description: Temperature for reference phases (higher than normal) (low impact on rewards).
-      default:
-      selector:
-        entity:
-          domain:
-            - scene
-          multiple: true
-    scenes_night_lower:
-      name: Morning reference scenes (1:00am to 4:00am)
-      description: Temperature for reference assessment phases (lower than normal) (moderate impact on rewards).
-      default:
-      selector:
-        entity:
-          domain:
-            - scene
-          multiple: true
-    scenes_day_lower:
-      name: Daytime reference scenes (12pm to 3pm)
-      description: Temperature for reference assessment phases (lower than normal) (moderate impact on rewards).
-      default:
-      selector:
-        entity:
-          domain:
-            - scene
-          multiple: true
     scenes_preheat:
       name: Preheating Scene (5PM - 6PM & 4PM - 5PM)
       description: Température durant la phase de pré-chauffage (aucun impact sur les récompenses).
@@ -98,7 +98,7 @@ blueprint:
             - scene
           multiple: true
     scenes_challenge:
-      name: Scènes défi am (6:00 à 10:00)
+      name: Scènes défi
       description: Température lors des défis (le plus bas possible).
       default:
       selector:
