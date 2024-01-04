@@ -114,6 +114,8 @@ trigger:
     entity_id:
       - schedule.daytime
 condition: []
+variables:
+  water_heater: !input water_heater
 action:
   - if:
       - condition: state
