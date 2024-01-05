@@ -260,7 +260,7 @@ action:
             sequence:
               - service: scene.turn_on
                 target:
-                  entity_id: !input scenes_night_anchor
+                  entity_id: !input scenes_night_higher
                 metadata: {}
               - choose:
                 - conditions: "{{ water_heater|length > 0 }}"
