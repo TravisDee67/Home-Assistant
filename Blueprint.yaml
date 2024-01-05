@@ -146,7 +146,7 @@ action:
             sequence:
               - service: scene.turn_on
                 target:
-                  entity_id: !input scenes_day_higher
+                  entity_id: !input scenes_day_anchor
                 metadata: {}
               - choose:
                 - conditions: "{{ water_heater|length > 0 }}"
@@ -162,7 +162,7 @@ action:
             sequence:
               - service: scene.turn_on
                 target:
-                  entity_id: scene.hilo_anchor
+                  entity_id: !input scenes_day_higher
                 metadata: {}
               - choose:
                 - conditions: "{{ water_heater|length > 0 }}"
@@ -244,7 +244,7 @@ action:
             sequence:
               - service: scene.turn_on
                 target:
-                  entity_id: !input scenes_night_higher
+                  entity_id: !input scenes_night_anchor
                 metadata: {}
               - choose:
                 - conditions: "{{ water_heater|length > 0 }}"
