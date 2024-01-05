@@ -313,7 +313,7 @@ action:
               - choose:
                 - conditions: "{{ water_heater|length > 0 }}"
                   sequence:
-                    - service: switch.turn_off
+                    - service: switch.turn_on
                       data: {}
                       target:
                         entity_id: !input water_heater
