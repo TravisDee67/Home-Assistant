@@ -184,7 +184,7 @@ variables:
   challenge_am: !input challenge_am
   challenge_pm: !input challenge_pm
   daytime_scene: !input daytime_scene
-  thermostats: "{{ state_attr(daytime_scene, 'entity_id') }}"  
+  thermostats: {{ state_attr(daytime_scene, 'entity_id') }}
 
 action:
   - choose:
