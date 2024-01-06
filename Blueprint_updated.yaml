@@ -1,6 +1,6 @@
 blueprint:
   name: Automatic Hilo challenges with Scenes, Schedule, & Geolocation
-  description: Save money and earn rewards by optimize temperatures for your Hilo challenges
+  description: Save money and earn rewards by optimize temperatures for your Hilo challenges 
   domain: automation
 
   input:
