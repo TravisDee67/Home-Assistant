@@ -241,8 +241,7 @@ action:
                                 - service: climate.set_temperature
                                   data_template:
                                     temperature: >-
-                                      {{ state_attr(thermostats[repeat.index -
-                                      1], 'temperature') | float(0) - !input assessment_reference_temp }}
+                                      {{ state_attr(thermostats[repeat.index - 1], 'temperature') | float(0) - !input assessment_reference_temp }}
                                   target:
                                     entity_id: "{{ thermostats[repeat.index - 1] }}" 
                       - conditions: #daytime ref_challenge challenge state (challenge_reference_temp)
@@ -279,8 +278,7 @@ action:
                                 - service: climate.set_temperature
                                   data_template:
                                     temperature: >-
-                                      {{ state_attr(thermostats[repeat.index -
-                                      1], 'temperature') | float(0) + !input challenge_reference_temp }}
+                                      {{ state_attr(thermostats[repeat.index - 1], 'temperature') | float(0) + !input challenge_reference_temp }}
                                   target:
                                     entity_id: "{{ thermostats[repeat.index - 1] }}" 
                       - conditions: #daytime appreciation challenge state (assessment_temp)
@@ -317,8 +315,7 @@ action:
                                 - service: climate.set_temperature
                                   data_template:
                                     temperature: >-
-                                      {{ state_attr(thermostats[repeat.index -
-                                      1], 'temperature') | float(0) + !input assessment_temp }}
+                                      {{ state_attr(thermostats[repeat.index - 1], 'temperature') | float(0) + !input assessment_temp }}
                                   target:
                                     entity_id: "{{ thermostats[repeat.index - 1] }}" 
                       - conditions: #daytime preheat challenge state (preheat_temp)
