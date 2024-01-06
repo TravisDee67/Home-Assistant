@@ -11,14 +11,14 @@ blueprint:
         entity:
           domain: input_text
 
-     daytime_schedule:
+    daytime_schedule:
       name: Daytime Scheudle 
       description: A schedule that you create that returns "On" during the day.
       selector:
         entity:
           domain: schedule
 
-     home_zone:
+    home_zone:
       name: Home Zone
       description: Select your home zone that tracks if a person is home.
       selector:
