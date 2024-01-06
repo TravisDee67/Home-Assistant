@@ -12,7 +12,7 @@ blueprint:
           domain: input_text
 
     daytime_schedule:
-      name: Daytime Scheudle 
+      name: Daytime Schedule 
       description: A schedule that you create that returns "On" during the day.
       selector:
         entity:
@@ -46,6 +46,13 @@ blueprint:
       selector:
         entity:
           domain: switch
+
+    thermostats:
+      name: Thermostats
+      selector:
+        entity:
+          domain: climate
+          multiple: true          
 
     daytime_scene:
       name: Normal Daytime Scene
@@ -184,7 +191,7 @@ variables:
   challenge_am: !input challenge_am
   challenge_pm: !input challenge_pm
   daytime_scene: !input daytime_scene
-  thermostats: {{ state_attr(daytime_scene, 'entity_id') }}
+  thermostats: !input thermostats
 
 action:
   - choose:
