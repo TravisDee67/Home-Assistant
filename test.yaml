@@ -1,0 +1,637 @@
+blueprint:
+  name: Automatic Hilo challenges with Scenes, Schedule, & Geolocation
+  description: Save money and earn rewards by optimize temperatures for your Hilo challenges
+  domain: automation
+
+  input:
+    challenge_entity:
+      name: Challenge phase entity
+      description: Input_text entity thas was manualy created that returns the current challenge phase
+      selector:
+        entity:
+          domain: input_text
+
+    daytime_schedule:
+      name: Daytime Scheudle 
+      description: A schedule that you create that returns "On" during the day.
+      selector:
+        entity:
+          domain: schedule
+
+    home_zone:
+      name: Home Zone
+      description: Select your home zone that tracks if a person is home.
+      selector:
+        entity:
+          domain: zone                
+
+    challenge_am:
+      name: AM Challenges
+      description: Participate in morning challenges (including reference periods)
+      default: true
+      selector:
+        boolean:
+
+    challenge_pm:
+      name: PM Challenges
+      description: Participate in afternoon challenges (including reference periods)
+      default: true
+      selector:
+        boolean:  
+
+    water_heater:
+      name: Water Heater (optional)
+      description: Deactivates water heater during challenges and base reference phases
+      default: null
+      selector:
+        entity:
+          domain: switch
+
+    daytime_scene:
+      name: Normal Daytime Scene
+      description: Scene with thermostats set to your desired temperature during normal times.
+      default: true
+      selector:
+        entity:
+          domain: scene    
+
+    nighttime_scene:
+      name: Normal Nighttime Scene
+      description: Scene with thermostats set to your desired temperature as night.
+      default: true
+      selector:
+        entity:
+          domain: scene         
+
+    away_scene:
+      name: Normal Away Scene
+      description: Scene with thermostats set to your desired temperature while you are away.
+      default: true
+      selector:
+        entity:
+          domain: scene                    
+
+    assessment_reference_temp:
+      name: AM Assessment Reference Temperature
+      description: Temperature to subtract from normal for assessment reference phases (moderate impact on rewards).
+      default: 1.5
+      selector:
+        number:
+          step: 0.5
+          min: 0
+          max: 10
+          unit_of_measurement: °C
+ 
+    challenge_reference_temp:
+      name: AM Challenge Reference Phase
+      description: Temperature to add to normal for challenge reference phases (low impact on rewards).
+      default: 1.5
+      selector:
+        number:
+          step: 0.5
+          min: 0
+          max: 10
+          unit_of_measurement: °C
+
+    # assessment_reference_temp_pm:
+    #   name: PM Assessment Reference Temperature
+    #   description: Temperature to subtract from normal for assessment reference phases (moderate impact on rewards).
+    #   default: 1.5
+    #   selector:
+    #     number:
+    #       step: 0.5
+    #       min: 0
+    #       max: 10
+    #       unit_of_measurement: °C
+
+    # challenge_reference_temp_pm:
+    #   name: PM Challenge Reference Phase
+    #   description: Temperature to add to normal for challenge reference phases (low impact on rewards).
+    #   default: 1.5
+    #   selector:
+    #     number:
+    #       step: 0.5
+    #       min: 0
+    #       max: 10
+    #       unit_of_measurement: °C          
+
+    assessment_temp:
+      name: Assessment Temperature
+      description: Temperature to add to normal for assessment phases (higher than normal) (significant impact on rewards).
+      default: 2.5
+      selector:
+        number:
+          step: 0.5
+          min: 0
+          max: 10
+          unit_of_measurement: °C
+
+    # assessment_temp_pm:
+    #   name: PM Assessment Temperature
+    #   description: Temperature to add to normal for assessment phases (higher than normal) (significant impact on rewards).
+    #   default: 2.5
+    #   selector:
+    #     number:
+    #       step: 0.5
+    #       min: 0
+    #       max: 10
+    #       unit_of_measurement: °C
+
+    preheat_temp:
+      name: Température de pré-chauffage
+      description: Temperature to add to normal for pre-heating phase (no impact on rewards).
+      default: 1.5
+      selector:
+        number:
+          step: 0.5
+          min: 0
+          max: 10
+          unit_of_measurement: °C
+
+    # preheat_temp_pm:
+    #   name: PM Température de pré-chauffage
+    #   description: Temperature to add to normal for pre-heating phase (no impact on rewards).
+    #   default: 1.5
+    #   selector:
+    #     number:
+    #       step: 0.5
+    #       min: 0
+    #       max: 10
+    #       unit_of_measurement: °C          
+
+    challenge_temp:
+      name: Température de défi
+      description: Temperature to subtract from normal for challenges (as low as possible)
+      default: 5
+      selector:
+        number:
+          step: 0.5
+          min: 0
+          max: 10
+          unit_of_measurement: °C
+  source_url: https://raw.githubusercontent.com/TravisDee67/Home-Assistant/main/Blueprint.yaml
+
+trigger:
+  - platform: state
+    entity_id: !input challenge_entity 
+  - platform: state
+    entity_id: !input daytime_schedule
+  - platform: state
+    entity_id: !input home_zone
+
+variables:
+  water_heater: !input water_heater
+  challenge_am: !input challenge_am
+  challenge_pm: !input challenge_pm
+  daytime_scene: !input daytime_scene
+  thermostats: "{{ state_attr(daytime_scene, 'entity_id') }}"  
+
+action:
+  - choose:
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: and
+                conditions:
+                  - condition: template
+                    value_template: "{{ challenge_pm }}"
+                  - condition: time
+                    after: "11:55:00"
+              - condition: and
+                conditions:
+                  - condition: template
+                    value_template: "{{ challenge_am }}"
+                  - condition: time
+                    before: "11:55:00"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: numeric_state
+                    entity_id: !input home_zone
+                    above: 0
+                sequence:
+                  - choose:
+                      - conditions:
+                          - condition: state
+                            entity_id: !input daytime_schedule
+                            state: "on"
+                        sequence:
+                          - choose:
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: normal
+                                sequence:
+                                  - service: switch.turn_off
+                                    data: {}
+                                    target:
+                                      entity_id: !input water_heater
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: ref_appreciation
+                                sequence:
+                                  - service: switch.turn_off
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) - !input assessment_reference_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: ref_challenge
+                                sequence:
+                                  - service: switch.turn_on
+                                    data: {}
+                                    target:
+                                      entity_id: !input water_heater
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) + challenge_reference_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: appreciation
+                                sequence:
+                                  - service: switch.turn_on
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) + !input assessment_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: preheat
+                                sequence:
+                                  - service: switch.turn_on
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) + 3 }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: challenge
+                                sequence:
+                                  - choose:
+                                      - conditions: "{{ water_heater|length > 0 }}"
+                                        sequence: 
+                                          - service: switch.turn_off
+                                            data: {}
+                                            target:
+                                              entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) - !input challenge_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                      - conditions:
+                          - condition: state
+                            entity_id: !input daytime_schedule
+                            state: "off"
+                        sequence:
+                          - choose:
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: normal
+                                sequence:
+                                  - service: switch.turn_off
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input nighttime_scenetime
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                             
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: ref_appreciation
+                                sequence:
+                                  - service: switch.turn_off
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input nighttime_scenetime
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) - !input assessment_reference_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}"
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: ref_challenge
+                                sequence:
+                                  - service: switch.turn_on
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input nighttime_scenetime
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) + challenge_reference_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}"
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: appreciation
+                                sequence:
+                                  - service: switch.turn_on
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) + !input assessment_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}"                                  
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: preheat
+                                sequence:
+                                  - service: switch.turn_on
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: !input daytime_scene
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) + 3 }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}"
+                              - conditions:
+                                  - condition: state
+                                    entity_id: !input challenge_entity
+                                    state: challenge
+                                sequence:
+                                  - service: switch.turn_off
+                                    data: {}
+                                    target:
+                                      entity_id: !input challenge_entity
+                                  - service: scene.turn_on
+                                    target:
+                                      entity_id: scene.hilo_reduce
+                                    metadata: {}
+                                  - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                                  - repeat:
+                                      count: "{{ thermostats | length }}"
+                                      sequence:
+                                        - service: climate.set_temperature
+                                          data_template:
+                                            temperature: >-
+                                              {{ state_attr(thermostats[repeat.index -
+                                              1], 'temperature') | float(0) - !input challenge_temp }}
+                                          target:
+                                            entity_id: "{{ thermostats[repeat.index - 1] }}"                            
+              - conditions:
+                  - condition: state
+                    entity_id: !input home_zone
+                    state: "0"
+                sequence:
+                  - choose:
+                      - conditions:
+                          - condition: state
+                            entity_id: !input challenge_entity
+                            state: normal
+                        sequence:
+                          - service: switch.turn_off
+                            data: {}
+                            target:
+                              entity_id: !input challenge_entity
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input away_scene
+                            metadata: {}
+                          - delay: '00:00:10'  # Adjust the delay duration as needed
+                      - conditions:
+                          - condition: state
+                            entity_id: !input challenge_entity
+                            state: ref_appreciation
+                        sequence:
+                          - service: switch.turn_off
+                            data: {}
+                            target:
+                              entity_id: !input challenge_entity
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input away_scene
+                            metadata: {}
+                          - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                          - repeat:
+                              count: "{{ thermostats | length }}"
+                              sequence:
+                                - service: climate.set_temperature
+                                  data_template:
+                                    temperature: >-
+                                      {{ state_attr(thermostats[repeat.index -
+                                      1], 'temperature') | float(0) - !input assessment_reference_temp }}
+                                  target:
+                                    entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                      - conditions:
+                          - condition: state
+                            entity_id: !input challenge_entity
+                            state: ref_challenge
+                        sequence:
+                          - service: switch.turn_on
+                            data: {}
+                            target:
+                              entity_id: !input challenge_entity
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input away_scene
+                            metadata: {}
+                          - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                          - repeat:
+                              count: "{{ thermostats | length }}"
+                              sequence:
+                                - service: climate.set_temperature
+                                  data_template:
+                                    temperature: >-
+                                      {{ state_attr(thermostats[repeat.index -
+                                      1], 'temperature') | float(0) + challenge_reference_temp }}
+                                  target:
+                                    entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                      - conditions:
+                          - condition: state
+                            entity_id: !input challenge_entity
+                            state: appreciation
+                        sequence:
+                          - service: switch.turn_on
+                            data: {}
+                            target:
+                              entity_id: !input challenge_entity
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input away_scene
+                            metadata: {}
+                          - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                          - repeat:
+                              count: "{{ thermostats | length }}"
+                              sequence:
+                                - service: climate.set_temperature
+                                  data_template:
+                                    temperature: >-
+                                      {{ state_attr(thermostats[repeat.index -
+                                      1], 'temperature') | float(0) + !input assessment_temp }}
+                                  target:
+                                    entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                      - conditions:
+                          - condition: state
+                            entity_id: !input challenge_entity
+                            state: preheat
+                        sequence:
+                          - service: switch.turn_on
+                            data: {}
+                            target:
+                              entity_id: !input challenge_entity
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input away_scene
+                            metadata: {}
+                          - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                          - repeat:
+                              count: "{{ thermostats | length }}"
+                              sequence:
+                                - service: climate.set_temperature
+                                  data_template:
+                                    temperature: >-
+                                      {{ state_attr(thermostats[repeat.index -
+                                      1], 'temperature') | float(0) + 3 }}
+                                  target:
+                                    entity_id: "{{ thermostats[repeat.index - 1] }}" 
+                      - conditions:
+                          - condition: state
+                            entity_id: !input challenge_entity
+                            state: challenge
+                        sequence:
+                          - service: switch.turn_off
+                            data: {}
+                            target:
+                              entity_id: !input challenge_entity
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input away_scene
+                            metadata: {}
+                          - delay: '00:00:10'  # Adjust the delay duration as needed                            
+                          - repeat:
+                              count: "{{ thermostats | length }}"
+                              sequence:
+                                - service: climate.set_temperature
+                                  data_template:
+                                    temperature: >-
+                                      {{ state_attr(thermostats[repeat.index -
+                                      1], 'temperature') | float(0) - !input challenge_temp }}
+                                  target:
+                                    entity_id: "{{ thermostats[repeat.index - 1] }}" 
+    default:
